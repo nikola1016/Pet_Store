@@ -17,16 +17,6 @@ abstract class User {
     }
 }
 
-// Admin Class
-class Admin extends User {
-    Date startDate;
-
-    public Admin(String name, String phone, String email, String username, String password, Date startDate) {
-        super(name, phone, email, username, password);
-        this.startDate = startDate;
-    }
-}
-
 // Customer Class
 class Customer extends User {
     String address;
