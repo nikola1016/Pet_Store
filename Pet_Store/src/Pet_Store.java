@@ -32,20 +32,6 @@ enum OrderStatus {
     CREATED, PROCESSING, SHIPPED, DELIVERED
 }
 
-// Pet Class
-class Pet {
-    String name;
-    double price;
-    String characteristics;
-    Category category;
-
-    public Pet(String name, double price, String characteristics, Category category) {
-        this.name = name;
-        this.price = price;
-        this.characteristics = characteristics;
-        this.category = category;
-    }
-}
 
 // Food Class
 class Food {
@@ -101,14 +87,6 @@ class Material {
     }
 }
 
-// Category Class
-class Category {
-    String name;
-
-    public Category(String name) {
-        this.name = name;
-    }
-}
 
 // Order Class
 class Order {
@@ -155,9 +133,7 @@ class Order {
 // Main Class to Run Project
 public class Pet_Store {
     public static void main(String[] args) {
-        Category dogCategory = new Category("Dogs");
-        Pet dog = new Pet("Golden Retriever", 800, "Friendly and energetic", dogCategory);
-
+       
         Material meat = new Material("Meat", 15);
         Food dogFood = new Food("Premium Dog Food", 50, "2025-12-31");
         dogFood.addIngredient(meat, 2);
