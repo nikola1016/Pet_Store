@@ -1,3 +1,4 @@
+import java.sql.*;
 import java.util.*;
 
 // User Class
@@ -27,29 +28,23 @@ class Customer extends User {
     }
 }
 
-// Enum for Order Status
+// OrderStatus Enum
 enum OrderStatus {
     CREATED, PROCESSING, SHIPPED, DELIVERED
 }
-
 
 // Food Class
 class Food {
     String name;
     double price;
-    List<Material> ingredients;
-    String expirationDate;
+    List<String> ingredients;
+    Date expirationDate;
 
-    public Food(String name, double price, String expirationDate) {
+    public Food(String name, double price, List<String> ingredients, Date expirationDate) {
         this.name = name;
         this.price = price;
+        this.ingredients = ingredients;
         this.expirationDate = expirationDate;
-        this.ingredients = new ArrayList<>();
-    }
-
-    public void addIngredient(Material ingredient, int quantity) {
-        ingredient.setQuantity(quantity);
-        ingredients.add(ingredient);
     }
 }
 
@@ -57,36 +52,14 @@ class Food {
 class Accessory {
     String name;
     double price;
-    List<Material> components;
+    List<String> materials;
 
-    public Accessory(String name, double price) {
+    public Accessory(String name, double price, List<String> materials) {
         this.name = name;
         this.price = price;
-        this.components = new ArrayList<>();
-    }
-
-    public void addComponent(Material component, int quantity) {
-        component.setQuantity(quantity);
-        components.add(component);
+        this.materials = materials;
     }
 }
-
-// Material Class
-class Material {
-    String name;
-    double price;
-    int quantity;
-
-    public Material(String name, double price) {
-        this.name = name;
-        this.price = price;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-}
-
 
 // Order Class
 class Order {
@@ -130,25 +103,93 @@ class Order {
     }
 }
 
-// Main Class to Run Project
-public class Pet_Store {
+// Service Layer
+class CustomerService {
+    public void createCustomer(String name, String phone, String email, String username, String password, String address) {
+        // Logic to add a new customer
+        Customer customer = new Customer(name, phone, email, username, password, address);
+        // Save customer to database (to be implemented in Repository Layer)
+        System.out.println("Customer created: " + customer.name);
+    }
+}
+
+class FoodService {
+    public void addFood(String name, double price, List<String> ingredients, Date expirationDate) {
+        // Logic to add a new food item
+        Food food = new Food(name, price, ingredients, expirationDate);
+        // Save food to database (to be implemented in Repository Layer)
+        System.out.println("Food added: " + food.name);
+    }
+
+    public void listFoods() {
+        // Logic to retrieve and list all foods (to be implemented in Repository Layer)
+        System.out.println("Listing all foods...");
+    }
+}
+
+class AccessoryService {
+    public void addAccessory(String name, double price, List<String> materials) {
+        // Logic to add a new accessory item
+        Accessory accessory = new Accessory(name, price, materials);
+        // Save accessory to database (to be implemented in Repository Layer)
+        System.out.println("Accessory added: " + accessory.name);
+    }
+
+    public void listAccessories() {
+        // Logic to retrieve and list all accessories (to be implemented in Repository Layer)
+        System.out.println("Listing all accessories...");
+    }
+}
+
+class OrderService {
+    public void createOrder(Customer customer, double deliveryFee) {
+        // Logic to create a new order
+        Order order = new Order(customer, deliveryFee);
+        // Save order to database (to be implemented in Repository Layer)
+        System.out.println("Order created for customer: " + customer.name);
+    }
+
+    public void addFoodToOrder(Order order, Food food) {
+        order.addFood(food);
+        System.out.println("Food added to order: " + food.name);
+    }
+
+    public void addAccessoryToOrder(Order order, Accessory accessory) {
+        order.addAccessory(accessory);
+        System.out.println("Accessory added to order: " + accessory.name);
+    }
+
+    public void updateOrderStatus(Order order, OrderStatus status) {
+        order.updateStatus(status);
+        System.out.println("Order status updated to: " + status);
+    }
+}
+
+// Main Class to Test Services
+public class PetStoreApp {
     public static void main(String[] args) {
-       
-        Material meat = new Material("Meat", 15);
-        Food dogFood = new Food("Premium Dog Food", 50, "2025-12-31");
-        dogFood.addIngredient(meat, 2);
+        CustomerService customerService = new CustomerService();
+        FoodService foodService = new FoodService();
+        AccessoryService accessoryService = new AccessoryService();
+        OrderService orderService = new OrderService();
 
-        Accessory leash = new Accessory("Leash", 30);
-        Material nylon = new Material("Nylon", 5);
-        leash.addComponent(nylon, 1);
+        // Create a customer
+        customerService.createCustomer("Ivan Petrov", "0888123456", "ivan@example.com", "ivanp", "password", "Sofia");
 
-        Customer customer = new Customer("Ivan Petrov", "0888123456", "ivan@email.com", "ivanp", "12345", "Sofia, Bulgaria");
-        Order order = new Order(customer, 10);
-        order.addFood(dogFood);
-        order.addAccessory(leash);
+        // Add foods and accessories
+        foodService.addFood("Dog Food", 20.5, List.of("Meat", "Rice"), new Date());
+        accessoryService.addAccessory("Dog Collar", 15.0, List.of("Leather", "Metal"));
 
-        System.out.println("Order for: " + customer.name);
-        System.out.println("Total: " + order.calculateTotal() + " BGN");
-        System.out.println("Status: " + order.status);
+        // Create an order
+        Customer customer = new Customer("Ivan Petrov", "0888123456", "ivan@example.com", "ivanp", "password", "Sofia");
+        Order order = new Order(customer, 10.0);
+        Food food = new Food("Dog Food", 20.5, List.of("Meat", "Rice"), new Date());
+        Accessory accessory = new Accessory("Dog Collar", 15.0, List.of("Leather", "Metal"));
+        orderService.createOrder(customer, 10.0);
+        orderService.addFoodToOrder(order, food);
+        orderService.addAccessoryToOrder(order, accessory);
+
+        // Update order status
+        orderService.updateOrderStatus(order, OrderStatus.SHIPPED);
     }
 }
